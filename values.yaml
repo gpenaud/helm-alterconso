@@ -1,0 +1,100 @@
+nameOverride: ""
+fullnameOverride: ""
+
+app:
+  # -------------------------------------------------------------------------- #
+  #                           application configuration                        #
+  # -------------------------------------------------------------------------- #
+  configuration:
+    webapp:
+      vhost: cagette.localhost
+      sql_log_enabled: true
+      debug_enabled: true
+      mailer_host: localhost
+      mailer_port: 5000
+      mysql_enabled: true
+      mysql_user: docker
+      mysql_password: docker
+      mysql_host: localhost
+      mysql_port: 3306
+      mysql_database: db
+
+  # -------------------------------------------------------------------------- #
+  #                           containers configuration                         #
+  # -------------------------------------------------------------------------- #
+  containers:
+
+    webapp:
+      replicaCount: 1
+      image:
+        repository: cagette
+        pullPolicy: IfNotPresent
+        tag: "1.0.0"
+      imagePullSecrets: []
+      # podSecurityContext:
+      #   runAsNonRoot: true
+      #   runAsUser: 1000
+      # We want to inject env vars in our container app.
+      resources:
+        limits:
+          cpu: 500m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 128Mi
+    # ------------------------------------------------------------------------ #
+    #                                   Mailer                                 #
+    # ------------------------------------------------------------------------ #
+    mailer:
+      replicaCount: 1
+      image:
+        repository: cagette-mailer
+        pullPolicy: IfNotPresent
+        tag: "1.0.0"
+      imagePullSecrets: []
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
+      env:
+        # smtp relay configuration
+        SMTP_HOST: smtp.gmail.com
+        SMTP_PORT: 587
+        SMTP_USER: guillaume.penaud@gmail.com
+        SMTP_PASSWORD: aej0Sude
+  # initContainers:
+  #   - name: check-db-ready
+  #     image: postgres:9.6.5
+  #     command:
+  #       - 'sh'
+  #       - '-c'
+  #       - 'until pg_isready -h windforlife-postgresql -p 5432; do echo waiting for database; sleep 2; done;'
+  serviceAccount:
+    create: true
+    name: ""
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      kubernetes.io/ingress.class: traefik
+    hosts:
+      - host: cagette.localhost
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+mysql:
+  enabled: true

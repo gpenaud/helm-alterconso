@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "windforlife.fullname" . }}
+  labels:
+    {{- include "windforlife.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.app.autoscaling.enabled }}
+  replicas: {{ .Values.app.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "windforlife.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.app.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "windforlife.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.app.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "windforlife.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.app.podSecurityContext | nindent 8 }}
+      initContainers:
+        {{- toYaml .Values.app.initContainers | nindent 8 }}
+      containers:
+        {{- range $name, $container := .Values.app.containers }}
+        - name: {{ $name }}
+          image: "{{ $container.image.repository }}:{{ $container.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $container.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: {{ $.Release.Name }}-webapp-volume
+              mountPath: "/var/www/cagette/config.xml"
+              subPath: config.xml
+              readOnly: true
+            - name: {{ $.Release.Name }}-webapp-volume
+              mountPath: "/etc/apache2/sites-available/{{ $.Values.app.configuration.webapp.vhost }}.conf"
+              subPath: "vhost.conf"
+              readOnly: true
+            - name: {{ $.Release.Name }}-webapp-volume
+              mountPath: "/etc/apache2/sites-enabled/{{ $.Values.app.configuration.webapp.vhost }}.conf"
+              subPath: "vhost.conf"
+              readOnly: true
+          securityContext:
+            {{- toYaml $container.securityContext | nindent 12 }}
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml $container.resources | nindent 12 }}
+          env:
+            {{- range $key, $value := $container.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+         {{- end }}
+      volumes:
+      - name: {{ .Release.Name }}-webapp-volume
+        configMap:
+          name: {{ .Release.Name }}-webapp
+          items:
+          - key: config.xml
+            path: config.xml
+          - key: vhost.conf
+            path: vhost.conf
+      {{- with .Values.app.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

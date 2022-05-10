@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-webapp
+  namespace: {{ .Values.namespace }}
+data:
+  config.xml: |
+    <config
+    	lang="fr"
+    	langs="fr;de;en"
+    	langnames="Français;Deutsch;English"
+
+    	host="localhost"
+    	name = "Cagette.net"
+    	default_email = "noreply@cagette.net"
+    	webmaster_email = "mon_email@mon_domaine.fr"
+
+      database="mysql://{{ .Values.app.configuration.webapp.mysql_user }}:{{ .Values.app.configuration.webapp.mysql_password }}@{{ $.Release.Name }}-mysql:{{ .Values.app.configuration.webapp.mysql_port }}/{{ .Values.app.configuration.webapp.mysql_database }}"
+
+      {{- if .Values.app.configuration.webapp.sql_log_enabled }}
+      sqllog="1"
+      {{ else }}
+      sqllog="0"
+      {{ end }}
+      {{- if .Values.app.configuration.webapp.debug_enabled }}
+      debug="1"
+      {{ else }}
+      debug="0"
+      {{ end }}
+    	cache="0"
+    	maintain="0"
+    	cachetpl="0"
+    	key="localdevkey"
+
+    	mailer_host="{{ .Values.app.configuration.webapp.mailer_host | default "127.0.0.1" }}"
+    	mailer_port="{{ .Values.app.configuration.webapp.mailer_port | default "5000" }}"
+
+    	cagette_api="http://localhost:3010"
+    />
+
+  vhost.conf: |
+    <VirtualHost *:80>
+      ServerName  {{ .Values.app.configuration.webapp.vhost }}
+      ServerAdmin  guillaume.penaud@gmail.com
+
+      DocumentRoot /var/www/cagette/www
+
+      <Directory /var/www/cagette/www>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+      </Directory>
+    </VirtualHost>
