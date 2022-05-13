@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "windforlife.fullname" . }}
+  name: {{ include "cagette.fullname" . }}
   labels:
-    {{- include "windforlife.labels" . | nindent 4 }}
+    {{- include "cagette.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.app.autoscaling.enabled }}
   replicas: {{ .Values.app.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "windforlife.selectorLabels" . | nindent 6 }}
+      {{- include "cagette.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.app.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "windforlife.selectorLabels" . | nindent 8 }}
+        {{- include "cagette.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.app.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "windforlife.serviceAccountName" . }}
+      serviceAccountName: {{ include "cagette.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.app.podSecurityContext | nindent 8 }}
       initContainers:
@@ -35,9 +35,7 @@ spec:
           image: "{{ $container.image.repository }}:{{ $container.image.tag | default $.Chart.AppVersion }}"
           imagePullPolicy: {{ $container.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
+            {{- toYaml $container.ports | nindent 10 }}
           volumeMounts:
             - name: {{ $.Release.Name }}-webapp-volume
               mountPath: "/var/www/cagette/config.xml"
@@ -69,6 +67,8 @@ spec:
               value: "{{ $value }}"
             {{- end }}
          {{- end }}
+      imagePullSecrets:
+        - name: regcred
       volumes:
       - name: {{ .Release.Name }}-webapp-volume
         configMap:
