@@ -49,5 +49,6 @@ data:
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
+        EnableSendfile Off
       </Directory>
     </VirtualHost>
