@@ -31,10 +31,6 @@ app:
         pullPolicy: IfNotPresent
         tag: "1.0.0"
       imagePullSecrets: []
-      # podSecurityContext:
-      #   runAsNonRoot: true
-      #   runAsUser: 1000
-      # We want to inject env vars in our container app.
       ports:
         - containerPort: 80
           protocol: TCP
@@ -61,24 +57,17 @@ app:
           protocol: TCP
       resources:
         limits:
-          cpu: 100m
+          cpu: 200m
           memory: 128Mi
         requests:
-          cpu: 50m
+          cpu: 150m
           memory: 64Mi
       env:
         # smtp relay configuration
-        SMTP_HOST: smtp.gmail.com
+        SMTP_HOST: mail.leportail.org
         SMTP_PORT: 587
-        SMTP_USER: PLACEHOLDER
-        SMTP_PASSWORD: PLACEHOLDER
-  # initContainers:
-  #   - name: check-db-ready
-  #     image: postgres:9.6.5
-  #     command:
-  #       - 'sh'
-  #       - '-c'
-  #       - 'until pg_isready -h windforlife-postgresql -p 5432; do echo waiting for database; sleep 2; done;'
+        SMTP_USER: cagette@leportail.org
+        SMTP_PASSWORD: frayanadele71!
   serviceAccount:
     create: true
     name: ""
@@ -91,7 +80,7 @@ app:
     annotations:
       kubernetes.io/ingress.class: "nginx"
       kubernetes.io/tls-acme: "true"
-      cert-manager.io/issuer: "letsencrypt-production-issuer"
+      cert-manager.io/cluster-issuer: "letsencrypt-production-clusterissuer"
       cert-manager.io/issue-temporary-certificate: "true"
       acme.cert-manager.io/http01-edit-in-place: "true"
     hosts:
@@ -99,14 +88,21 @@ app:
         paths:
           - path: /
             pathType: Prefix
+      - host: cagette.leportail.org
+        paths:
+          - path: /
+            pathType: Prefix
     tls:
       - hosts:
         - cagette-alterconso.happynuts.me
         secretName: cagette-alterconso.happynuts.me-tls
+      - hosts:
+        - cagette.leportail.org
+        secretName: cagette.leportail.org-tls
   autoscaling:
     enabled: true
     minReplicas: 1
-    maxReplicas: 4
+    maxReplicas: 2
     targetCPUUtilizationPercentage: 90
     targetMemoryUtilizationPercentage: 90
 
