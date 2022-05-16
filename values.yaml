@@ -67,7 +67,7 @@ app:
         SMTP_HOST: mail.leportail.org
         SMTP_PORT: 587
         SMTP_USER: cagette@leportail.org
-        SMTP_PASSWORD: frayanadele71!
+        SMTP_PASSWORD:
   serviceAccount:
     create: true
     name: ""
