@@ -66,6 +66,16 @@ spec:
             - name: {{ $key }}
               value: "{{ $value }}"
             {{- end }}
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key: smtp_user
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key: smtp_password
          {{- end }}
       imagePullSecrets:
         - name: regcred

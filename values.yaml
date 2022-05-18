@@ -14,10 +14,15 @@ app:
       mailer_port: 5000
       mysql_enabled: true
       mysql_user: docker
-      mysql_password: docker
+      encrypted_mysql_password: yJxHeW+spOfxI/roT9x1+ou64R5kXYTYvi1SWZrB2+Y=
       mysql_host: localhost
       mysql_port: 3306
       mysql_database: db
+
+  secrets:
+    mailer:
+      encrypted_smtp_user: mQUiSaBFt6JBi9GLdSgNvaBb3UKwBrgIJ0zX2KlMJ9FSkhrnhgU9rbDCO8Nekt2B
+      encrypted_smtp_password: wc3sDgvOeWTFRJ1kukwCXUIPnrpfpm/wE90Sg/euix8=
 
   # -------------------------------------------------------------------------- #
   #                           containers configuration                         #
@@ -66,8 +71,6 @@ app:
         # smtp relay configuration
         SMTP_HOST: mail.leportail.org
         SMTP_PORT: 587
-        SMTP_USER: cagette@leportail.org
-        SMTP_PASSWORD:
   serviceAccount:
     create: true
     name: ""
@@ -94,10 +97,8 @@ app:
             pathType: Prefix
     tls:
       - hosts:
-        - cagette-alterconso.happynuts.me
         secretName: cagette-alterconso.happynuts.me-tls
       - hosts:
-        - cagette.leportail.org
         secretName: cagette.leportail.org-tls
   autoscaling:
     enabled: true
