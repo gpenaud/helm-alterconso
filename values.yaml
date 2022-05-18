@@ -14,7 +14,7 @@ app:
       mailer_port: 5000
       mysql_enabled: true
       mysql_user: docker
-      encrypted_mysql_password: yJxHeW+spOfxI/roT9x1+ou64R5kXYTYvi1SWZrB2+Y=
+      mysql_password: docker
       mysql_host: localhost
       mysql_port: 3306
       mysql_database: db
