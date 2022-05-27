@@ -10,10 +10,10 @@ data:
     	langs="fr;de;en"
     	langnames="Français;Deutsch;English"
 
-    	host="localhost"
-    	name = "Cagette.net"
-    	default_email = "noreply@cagette.net"
-    	webmaster_email = "mon_email@mon_domaine.fr"
+      host="{{ .Values.app.configuration.webapp.vhost }}"
+      name = "Cagette - Le Portail"
+      default_email = "cagette@leportail.org"
+      webmaster_email = "mon_email@mon_domaine.fr"
 
       database="mysql://{{ .Values.app.configuration.webapp.mysql_user }}:{{ .Values.app.configuration.webapp.mysql_password }}@{{ $.Release.Name }}-mysql:{{ .Values.app.configuration.webapp.mysql_port }}/{{ .Values.app.configuration.webapp.mysql_database }}"
 
