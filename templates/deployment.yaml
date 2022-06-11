@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "cagette.fullname" . }}
+  name: {{ include "alterconso.fullname" . }}
   labels:
-    {{- include "cagette.labels" . | nindent 4 }}
+    {{- include "alterconso.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.app.autoscaling.enabled }}
   replicas: {{ .Values.app.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "cagette.selectorLabels" . | nindent 6 }}
+      {{- include "alterconso.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.app.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "cagette.selectorLabels" . | nindent 8 }}
+        {{- include "alterconso.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.app.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "cagette.serviceAccountName" . }}
+      serviceAccountName: {{ include "alterconso.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.app.podSecurityContext | nindent 8 }}
       initContainers:
@@ -38,7 +38,7 @@ spec:
             {{- toYaml $container.ports | nindent 10 }}
           volumeMounts:
             - name: {{ $.Release.Name }}-webapp-volume
-              mountPath: "/var/www/cagette/config.xml"
+              mountPath: "/var/www/alterconso/config.xml"
               subPath: config.xml
               readOnly: true
             - name: {{ $.Release.Name }}-webapp-volume

@@ -1,12 +1,12 @@
 {{- if .Values.app.ingress.enabled -}}
-{{- $fullName := include "cagette.fullname" . -}}
+{{- $fullName := include "alterconso.fullname" . -}}
 {{- $svcPort := .Values.app.service.port -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels:
-    {{- include "cagette.labels" . | nindent 4 }}
+    {{- include "alterconso.labels" . | nindent 4 }}
   {{- with .Values.app.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

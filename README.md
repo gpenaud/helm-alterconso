@@ -1,1 +1,1 @@
-# helm cagette
+# Helm chart for alterconso application

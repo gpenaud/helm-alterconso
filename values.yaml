@@ -7,7 +7,7 @@ app:
   # -------------------------------------------------------------------------- #
   configuration:
     webapp:
-      vhost: cagette-alterconso.happynuts.me
+      vhost: alterconso.leportail.org
       sql_log_enabled: false
       debug_enabled: true
       mailer_host: localhost
@@ -32,7 +32,7 @@ app:
     webapp:
       replicaCount: 1
       image:
-        repository: cagette
+        repository: alterconso-webapp
         pullPolicy: IfNotPresent
         tag: "1.0.0"
       imagePullSecrets: []
@@ -52,7 +52,7 @@ app:
     mailer:
       replicaCount: 1
       image:
-        repository: cagette-mailer
+        repository: alterconso-mailer
         pullPolicy: IfNotPresent
         tag: "1.0.0"
       imagePullSecrets: []
@@ -83,23 +83,17 @@ app:
     annotations:
       kubernetes.io/ingress.class: "nginx"
       kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: "letsencrypt-production-clusterissuer"
+      cert-manager.io/cluster-issuer: "letsencrypt-staging-clusterissuer"
       cert-manager.io/issue-temporary-certificate: "true"
       acme.cert-manager.io/http01-edit-in-place: "true"
     hosts:
-      - host: cagette-alterconso.happynuts.me
-        paths:
-          - path: /
-            pathType: Prefix
-      - host: cagette.leportail.org
+      - host: alterconso.leportail.org
         paths:
           - path: /
             pathType: Prefix
     tls:
       - hosts:
-        secretName: cagette-alterconso.happynuts.me-tls
-      - hosts:
-        secretName: cagette.leportail.org-tls
+        secretName: alterconso.leportail.org-tls
   autoscaling:
     enabled: true
     minReplicas: 1

@@ -11,8 +11,8 @@ data:
     	langnames="Français;Deutsch;English"
 
       host="{{ .Values.app.configuration.webapp.vhost }}"
-      name = "Cagette - Le Portail"
-      default_email = "cagette@leportail.org"
+      name = "Alterconso - Le Portail"
+      default_email = "alterconso@leportail.org"
       webmaster_email = "mon_email@mon_domaine.fr"
 
       database="mysql://{{ .Values.app.configuration.webapp.mysql_user }}:{{ .Values.app.configuration.webapp.mysql_password }}@{{ $.Release.Name }}-mysql:{{ .Values.app.configuration.webapp.mysql_port }}/{{ .Values.app.configuration.webapp.mysql_database }}"
@@ -35,7 +35,7 @@ data:
     	mailer_host="{{ .Values.app.configuration.webapp.mailer_host | default "127.0.0.1" }}"
     	mailer_port="{{ .Values.app.configuration.webapp.mailer_port | default "5000" }}"
 
-    	cagette_api="http://localhost:3010"
+    	alterconso_api="http://localhost:3010"
     />
 
   vhost.conf: |
@@ -43,9 +43,9 @@ data:
       ServerName  {{ .Values.app.configuration.webapp.vhost }}
       ServerAdmin  guillaume.penaud@gmail.com
 
-      DocumentRoot /var/www/cagette/www
+      DocumentRoot /var/www/alterconso/www
 
-      <Directory /var/www/cagette/www>
+      <Directory /var/www/alterconso/www>
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
